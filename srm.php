@@ -1,4 +1,8 @@
 <?php
+/*
+Version 0.1
+https://github.com/guglia001/php-secure-remove
+*/
 //error_reporting(E_ERROR | E_PARSE);
         if (empty($_GET['dir'])) {
             $path = getcwd();
@@ -17,6 +21,7 @@
             }
         }
         echo "
+        
 <center>
 <form action='' method=GET>
 Directory : <input type=text name=dir value='" . $path . "'><input type=submit name=ir value=Enter>
